@@ -1,16 +1,18 @@
 import { Entity } from "./Entity";
-import { GameCore } from "./GameCore";
+import { IGameCore } from "./interfaces";
 import { TILE_SIZE, COLORS, POWERUP_TYPE } from "./constants";
 import { Bomb } from "./Bomb";
+import { Enemy } from "./Enemy";
 import { Powerup, InputState } from "./types";
 
 export class Player extends Entity {
+    readonly type = 'Player';
     bombLimit: number = 1;
     bombRange: number = 1;
     activeBombs: number = 0;
     color: string = COLORS.player;
 
-    constructor(game: GameCore, x: number, y: number) {
+    constructor(game: IGameCore, x: number, y: number) {
         super(game, x, y, 4);
     }
 
@@ -93,7 +95,7 @@ export class Player extends Entity {
             if (e.dead) continue;
             let dist = Math.hypot((this.x) - (e.x), (this.y) - (e.y));
             if (dist < TILE_SIZE * 0.6) {
-                this.die();
+                this.die(false, e); 
             }
         }
     }
@@ -117,9 +119,20 @@ export class Player extends Entity {
         if (p.type === POWERUP_TYPE.SPEED) this.speed = Math.min(this.speed + 1, 8);
     }
 
-    die() {
+    die(shakeScreen: boolean = true, killer?: Entity) {
         this.dead = true;
-        this.game.createParticles(this.x + TILE_SIZE/2, this.y + TILE_SIZE/2, COLORS.player, 20);
+        
+        if (killer && killer.type === 'Enemy') {
+            // Snap enemy to player's last known location
+            (killer as Enemy).triggerEating(this.x, this.y);
+            // No gore or particles as requested
+        } else {
+            this.game.createParticles(this.x + TILE_SIZE/2, this.y + TILE_SIZE/2, '#c0392b', 50); 
+            if (shakeScreen) {
+                this.game.setScreenShake(20);
+            }
+        }
+        
         this.game.triggerGameOver();
     }
 

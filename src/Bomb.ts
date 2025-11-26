@@ -1,4 +1,4 @@
-import { GameCore } from "./GameCore";
+import { IGameCore } from "./interfaces";
 import { TILE_SIZE, COLORS, COLS, ROWS, TILE } from "./constants";
 import { Player } from "./Player";
 
@@ -11,9 +11,9 @@ export class Bomb {
     owner: Player;
     timer: number = 180;
     pulse: number = 0;
-    private game: GameCore;
+    private game: IGameCore;
 
-    constructor(game: GameCore, tx: number, ty: number, range: number, owner: Player) {
+    constructor(game: IGameCore, tx: number, ty: number, range: number, owner: Player) {
         this.game = game;
         this.tx = tx;
         this.ty = ty;

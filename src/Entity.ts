@@ -1,4 +1,4 @@
-import { GameCore } from "./GameCore";
+import { IGameCore } from "./interfaces";
 import { TILE_SIZE, COLS, ROWS, TILE } from "./constants";
 import { Rect, InputState } from "./types";
 
@@ -10,9 +10,11 @@ export abstract class Entity {
     speed: number;
     direction: number | null = null;
     dead: boolean = false;
-    protected game: GameCore;
+    protected game: IGameCore;
+    
+    abstract readonly type: string;
 
-    constructor(game: GameCore, x: number, y: number, speed: number) {
+    constructor(game: IGameCore, x: number, y: number, speed: number) {
         this.game = game;
         this.x = x;
         this.y = y;
@@ -37,7 +39,7 @@ export abstract class Entity {
     canMove(newX: number, newY: number): boolean {
         let bombsStandingOn: any[] = [];
         
-        if (this.constructor.name === 'Player') {
+        if (this.type === 'Player') {
             const currentRect: Rect = {
                 x: this.x + (TILE_SIZE - this.w) / 2, 
                 y: this.y + (TILE_SIZE - this.h) / 2, 

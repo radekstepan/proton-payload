@@ -20,6 +20,7 @@ export interface Particle {
     life: number;
     color: string;
     size: number;
+    decay?: number;
 }
 
 export interface Powerup {

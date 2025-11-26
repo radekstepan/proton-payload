@@ -1,9 +1,12 @@
 import { Entity } from "./Entity";
-import { GameCore } from "./GameCore";
+import { IGameCore } from "./interfaces";
 import { TILE_SIZE, COLORS } from "./constants";
 
 export class Enemy extends Entity {
-    constructor(game: GameCore, x: number, y: number) {
+    readonly type = 'Enemy';
+    isEating: boolean = false;
+
+    constructor(game: IGameCore, x: number, y: number) {
         super(game, x, y, 2);
         this.direction = 1;
         
@@ -12,8 +15,24 @@ export class Enemy extends Entity {
         this.y = Math.round((this.y - offset) / TILE_SIZE) * TILE_SIZE + offset;
     }
 
+    triggerEating(targetX?: number, targetY?: number) {
+        this.isEating = true;
+        if (targetX !== undefined && targetY !== undefined) {
+            // Snap exactly to where the player was
+            this.x = targetX;
+            this.y = targetY;
+        } else {
+            // Fallback to center of current tile
+            const cx = this.getTileX() * TILE_SIZE + (TILE_SIZE - this.w) / 2;
+            const cy = this.getTileY() * TILE_SIZE + (TILE_SIZE - this.h) / 2;
+            this.x = cx;
+            this.y = cy;
+        }
+    }
+
     update() {
         if (this.dead) return;
+        if (this.isEating) return;
 
         const offset = (TILE_SIZE - this.h) / 2;
         const gridX = Math.round((this.x - offset) / TILE_SIZE);
@@ -76,7 +95,12 @@ export class Enemy extends Entity {
         const cx = this.x + TILE_SIZE/2;
         const cy = this.y + TILE_SIZE/2;
 
-        ctx.fillStyle = COLORS.enemy;
+        if (this.isEating) {
+            const flash = Math.floor(Date.now() / 100) % 2 === 0;
+            ctx.fillStyle = flash ? '#ff0000' : COLORS.enemy;
+        } else {
+            ctx.fillStyle = COLORS.enemy;
+        }
         
         ctx.beginPath();
         ctx.arc(cx, cy, 14, 0, Math.PI*2);

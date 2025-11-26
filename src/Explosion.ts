@@ -1,4 +1,4 @@
-import { GameCore } from "./GameCore";
+import { IGameCore } from "./interfaces";
 import { TILE_SIZE, COLORS } from "./constants";
 import { Rect } from "./types";
 
@@ -6,9 +6,9 @@ export class Explosion {
     tx: number;
     ty: number;
     life: number = 20;
-    private game: GameCore;
+    private game: IGameCore;
 
-    constructor(game: GameCore, tx: number, ty: number) {
+    constructor(game: IGameCore, tx: number, ty: number) {
         this.game = game;
         this.tx = tx;
         this.ty = ty;
@@ -27,7 +27,7 @@ export class Explosion {
         const player = this.game.player;
         if (player && !player.dead) {
             if (this.rectIntersect(rect, {x: player.x, y: player.y, w: player.w, h: player.h})) {
-                player.die();
+                player.die(true); // Shake screen when blown up
             }
         }
 

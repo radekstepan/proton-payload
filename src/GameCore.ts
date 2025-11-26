@@ -1,3 +1,4 @@
+import { IGameCore } from "./interfaces";
 import { TILE_SIZE, COLS, ROWS, TILE, COLORS } from "./constants";
 import { Player } from "./Player";
 import { Enemy } from "./Enemy";
@@ -5,7 +6,7 @@ import { Bomb } from "./Bomb";
 import { Explosion } from "./Explosion";
 import { Particle, Powerup, InputState } from "./types";
 
-export class GameCore {
+export class GameCore implements IGameCore {
     grid: number[][] = [];
     bombs: Bomb[] = [];
     explosions: Explosion[] = [];
@@ -22,7 +23,6 @@ export class GameCore {
     screenShake: number = 0;
 
     constructor() {
-        // No DOM access here
     }
 
     initLevel() {
@@ -34,7 +34,6 @@ export class GameCore {
         this.enemies = [];
         this.isLevelTransitioning = false;
         
-        // Create Grid
         for (let r = 0; r < ROWS; r++) {
             let row: number[] = [];
             for (let c = 0; c < COLS; c++) {
@@ -70,13 +69,26 @@ export class GameCore {
     }
 
     update(input: InputState) {
-        if (this.isGameOver) return;
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            let p = this.particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life--;
+            
+            const decay = p.decay !== undefined ? p.decay : 0.95;
+            p.size *= decay;
 
-        // Level Transition Logic
-        // Check if enemies are cleared. We check length because dead enemies are filtered out at the end of the update loop.
+            if (p.life <= 0) this.particles.splice(i, 1);
+        }
+
+        if (this.screenShake > 0) this.screenShake *= 0.85;
+        if (this.screenShake < 0.5) this.screenShake = 0;
+        
+        if (this.isGameOver) return; 
+
         if (!this.isLevelTransitioning && this.enemies.length === 0) {
             this.isLevelTransitioning = true;
-            this.levelTransitionTimer = 120; // Wait ~2 seconds (assuming 60fps)
+            this.levelTransitionTimer = 120; 
         }
 
         if (this.isLevelTransitioning) {
@@ -84,7 +96,7 @@ export class GameCore {
             if (this.levelTransitionTimer <= 0) {
                 this.level++;
                 this.initLevel();
-                return; // Stop update for this frame as level is reset
+                return;
             }
         }
 
@@ -96,18 +108,6 @@ export class GameCore {
         
         this.enemies = this.enemies.filter(e => !e.dead);
         this.enemies.forEach(e => e.update());
-
-        for (let i = this.particles.length - 1; i >= 0; i--) {
-            let p = this.particles[i];
-            p.x += p.vx;
-            p.y += p.vy;
-            p.life--;
-            p.size *= 0.95;
-            if (p.life <= 0) this.particles.splice(i, 1);
-        }
-
-        if (this.screenShake > 0) this.screenShake *= 0.8;
-        if (this.screenShake < 0.5) this.screenShake = 0;
     }
 
     addScore(amount: number) {
@@ -155,11 +155,12 @@ export class GameCore {
             this.particles.push({
                 x: x,
                 y: y,
-                vx: (Math.random() - 0.5) * 6,
-                vy: (Math.random() - 0.5) * 6,
+                vx: (Math.random() - 0.5) * 8,
+                vy: (Math.random() - 0.5) * 8,
                 life: 30 + Math.random() * 20,
                 color: color,
-                size: Math.random() * 4 + 2
+                size: Math.random() * 5 + 3,
+                decay: 0.95
             });
         }
     }
