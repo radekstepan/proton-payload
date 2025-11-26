@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Proton Payload</title>
+</head>
+<body>
+    <div id="game-container" class="crt">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="ui-layer">
+            <div id="score-display">SCORE: 0</div>
+            <div id="level-display">LVL: 1</div>
+        </div>
+
+        <div id="game-over">
+            <h1 id="go-title">GAME OVER</h1>
+            <p id="go-score">Final Score: 0</p>
+            <button id="restart-btn">Try Again</button>
+        </div>
+
+        <div id="mobile-controls">
+            <div class="dpad">
+                <div class="dpad-btn dpad-up" data-key="ArrowUp"></div>
+                <div class="dpad-btn dpad-left" data-key="ArrowLeft"></div>
+                <div class="dpad-btn dpad-right" data-key="ArrowRight"></div>
+                <div class="dpad-btn dpad-down" data-key="ArrowDown"></div>
+            </div>
+            <div class="action-btn" data-key="Space">BOMB</div>
+        </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
