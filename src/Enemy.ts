@@ -1,9 +1,9 @@
 import { Entity } from "./Entity";
-import { Game } from "./Game";
+import { GameCore } from "./GameCore";
 import { TILE_SIZE, COLORS } from "./constants";
 
 export class Enemy extends Entity {
-    constructor(game: Game, x: number, y: number) {
+    constructor(game: GameCore, x: number, y: number) {
         super(game, x, y, 2);
         this.direction = 1;
         

@@ -1,4 +1,4 @@
-import { Game } from "./Game";
+import { GameCore } from "./GameCore";
 import { TILE_SIZE, COLORS } from "./constants";
 import { Rect } from "./types";
 
@@ -6,9 +6,9 @@ export class Explosion {
     tx: number;
     ty: number;
     life: number = 20;
-    private game: Game;
+    private game: GameCore;
 
-    constructor(game: Game, tx: number, ty: number) {
+    constructor(game: GameCore, tx: number, ty: number) {
         this.game = game;
         this.tx = tx;
         this.ty = ty;

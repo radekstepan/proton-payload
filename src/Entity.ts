@@ -1,6 +1,6 @@
-import { Game } from "./Game";
+import { GameCore } from "./GameCore";
 import { TILE_SIZE, COLS, ROWS, TILE } from "./constants";
-import { Rect } from "./types";
+import { Rect, InputState } from "./types";
 
 export abstract class Entity {
     x: number;
@@ -10,9 +10,9 @@ export abstract class Entity {
     speed: number;
     direction: number | null = null;
     dead: boolean = false;
-    protected game: Game;
+    protected game: GameCore;
 
-    constructor(game: Game, x: number, y: number, speed: number) {
+    constructor(game: GameCore, x: number, y: number, speed: number) {
         this.game = game;
         this.x = x;
         this.y = y;
@@ -37,7 +37,6 @@ export abstract class Entity {
     canMove(newX: number, newY: number): boolean {
         let bombsStandingOn: any[] = [];
         
-        // Player specific: can walk off bombs they are currently on
         if (this.constructor.name === 'Player') {
             const currentRect: Rect = {
                 x: this.x + (TILE_SIZE - this.w) / 2, 
@@ -85,6 +84,6 @@ export abstract class Entity {
         return true;
     }
 
-    abstract update(): void;
+    abstract update(input?: InputState): void;
     abstract draw(ctx: CanvasRenderingContext2D): void;
 }

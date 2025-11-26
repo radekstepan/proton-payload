@@ -1,4 +1,4 @@
-import { Game } from "./Game";
+import { GameCore } from "./GameCore";
 import { TILE_SIZE, COLORS, COLS, ROWS, TILE } from "./constants";
 import { Player } from "./Player";
 
@@ -11,9 +11,9 @@ export class Bomb {
     owner: Player;
     timer: number = 180;
     pulse: number = 0;
-    private game: Game;
+    private game: GameCore;
 
-    constructor(game: Game, tx: number, ty: number, range: number, owner: Player) {
+    constructor(game: GameCore, tx: number, ty: number, range: number, owner: Player) {
         this.game = game;
         this.tx = tx;
         this.ty = ty;
@@ -55,7 +55,6 @@ export class Bomb {
                     break;
                 }
 
-                // Corrected: check against 'ny' instead of 'ty'
                 let hitBomb = this.game.bombs.find(b => b.tx === nx && b.ty === ny);
                 if (hitBomb) {
                     hitBomb.timer = 0; 

@@ -1,8 +1,8 @@
 import { Entity } from "./Entity";
-import { Game } from "./Game";
+import { GameCore } from "./GameCore";
 import { TILE_SIZE, COLORS, POWERUP_TYPE } from "./constants";
 import { Bomb } from "./Bomb";
-import { Powerup } from "./types";
+import { Powerup, InputState } from "./types";
 
 export class Player extends Entity {
     bombLimit: number = 1;
@@ -10,21 +10,20 @@ export class Player extends Entity {
     activeBombs: number = 0;
     color: string = COLORS.player;
 
-    constructor(game: Game, x: number, y: number) {
+    constructor(game: GameCore, x: number, y: number) {
         super(game, x, y, 4);
     }
 
-    update() {
-        if (this.dead) return;
+    update(input?: InputState) {
+        if (this.dead || !input) return;
 
-        const keys = this.game.input.keys;
         let dx = 0;
         let dy = 0;
 
-        if (keys.ArrowUp) dy = -this.speed;
-        if (keys.ArrowDown) dy = this.speed;
-        if (keys.ArrowLeft) dx = -this.speed;
-        if (keys.ArrowRight) dx = this.speed;
+        if (input.ArrowUp) dy = -this.speed;
+        if (input.ArrowDown) dy = this.speed;
+        if (input.ArrowLeft) dx = -this.speed;
+        if (input.ArrowRight) dx = this.speed;
 
         const getRowCenter = (y: number, h: number) => {
             const tileRow = Math.round((y + (TILE_SIZE - h)/2) / TILE_SIZE);
@@ -74,9 +73,9 @@ export class Player extends Entity {
             }
         }
 
-        if (keys.Space && !this.game.input.spaceLocked) {
+        if (input.Space && !input.SpaceLocked) {
             this.dropBomb();
-            this.game.input.spaceLocked = true;
+            input.SpaceLocked = true;
         }
 
         const powerups = this.game.powerups;
@@ -121,7 +120,7 @@ export class Player extends Entity {
     die() {
         this.dead = true;
         this.game.createParticles(this.x + TILE_SIZE/2, this.y + TILE_SIZE/2, COLORS.player, 20);
-        this.game.endGame();
+        this.game.triggerGameOver();
     }
 
     draw(ctx: CanvasRenderingContext2D) {

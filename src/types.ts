@@ -27,3 +27,12 @@ export interface Powerup {
     y: number;
     type: POWERUP_TYPE;
 }
+
+export interface InputState {
+    ArrowUp: boolean;
+    ArrowDown: boolean;
+    ArrowLeft: boolean;
+    ArrowRight: boolean;
+    Space: boolean;
+    SpaceLocked: boolean;
+}
